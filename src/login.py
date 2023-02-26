@@ -18,6 +18,11 @@ class LoginPage(QDialog):
     def login(self):
         self.current_user = self.lineEdit.text()
         self.current_password = self.lineEdit_2.text()
+        self.role = ""
+        if self.radioButton.isChecked():
+            self.role = "Medical Staff"
+        if self.radioButton2.isChecked():
+            self.role = "Admin"
         if not self.is_valid_user():
             print("Not a registered account")
             self.label_6.setText("User not registered - please sign up or try again.")
@@ -26,16 +31,32 @@ class LoginPage(QDialog):
             menu = MainMenu()
             QApplication.processEvents()
             menu.label_2.setText("Logged in as: " + self.current_user)
+            menu.label_3.setText("Role: " + self.role)
             menu.show()
             menu.pushButton.clicked.connect(self.find_patient)
             self.close()
+
+    def medical_selected(self):
+        if self.radioButton.isChecked():
+            self.role = "Medical Staff"
+            print("Medical Staff")
+
+    def admin_selected(self):
+        if self.radioButton2.isChecked():
+            self.role = "Admin"
+            print("Admin")
 
     def create_account(self): #still need to implement create account logic (connection being lost)
         global create_account
         create_account = CreateAccount(self.postgresDB)
         create_account.pushButton_2.clicked.connect(self.register)
+        create_account.pushButton.clicked.connect(self.back_to_login)
         create_account.show()
         self.close()
+
+    def back_to_login(self):
+        login_page.show()
+        create_account.close()
 
     def register(self):
         create_user = create_account.lineEdit.text()
@@ -77,6 +98,7 @@ class LoginPage(QDialog):
 if __name__ == '__main__':
     postgresDB = PostgresHandler('mentcare.cfteod2es6ye.us-east-1.rds.amazonaws.com', 5432, 'postgres', '(mfgaH3)', 'MentCare')
     app = QApplication(sys.argv)
+    global login_page
     login_page = LoginPage(postgresDB)
     login_page.show()
     sys.exit(app.exec_())
