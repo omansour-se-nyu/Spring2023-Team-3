@@ -9,7 +9,7 @@ class PostgresHandler():
         self.password = password
         self.database = database
         self.cur = None
-        #self.con = self.connect()
+        self.con = self.connect()
 
 
     def connect(self):
@@ -27,31 +27,23 @@ class PostgresHandler():
             print(error)
 
     def getData(self, tableName):
-        try:
-            #if self.con == None:
-            self.con = self.connect()
-            sql = "select * from " + str(tableName)
-            self.cur.execute(sql)
-            df = DataFrame(self.cur.fetchall())
-            print(df)
-            return df
-        except Exception as error:
-            print(error)
-        finally:
-            if self.con is not None:
-                self.con.close()
-            if self.cur is not None:
-                self.cur.close()
+        if self.con == None:
+            try:
+                self.con = self.connect()
+                sql = "select * from " + str(tableName)
+                self.cur.execute(sql)
+                df = DataFrame(self.cur.fetchall())
+                print(df)
+                return df
+            except Exception as error:
+                print(error)
+            finally:
+                if self.con is not None:
+                    self.con.close()
+                if self.cur is not None:
+                    self.cur.close()
 
     def getQuery(self, query):
-
-        try:
-            #if self.con == None:
-            self.connect()
-            sql = query
-            self.cur.execute(sql)
-            df = DataFrame(self.cur.fetchall())
-=======
 
 
         try:
@@ -60,7 +52,6 @@ class PostgresHandler():
             self.cur.execute(sql)
 
             df = DataFrame(self.cur.fetchall(),columns=['UserName', 'Password'])
-
             print(df)
             return df
         except Exception as error:
@@ -70,8 +61,6 @@ class PostgresHandler():
                 self.con.close()
             if self.cur is not None:
                 self.cur.close()
-
-=======
 
     def insertData(self, query):
         try:
@@ -106,46 +95,24 @@ class PostgresHandler():
                 if self.cur is not None:
                     self.cur.close()
 
-
     def insertData(self, query):
-        try:
-            #if self.con == None:
-            self.connect()
-            # sql = "insert into " + tableName + " (" + schema  + ") values (" + data + ")"
-            sql = query
-            self.cur.execute(sql)
-            if self.con == None:
+        if self.con == None:
+            try:
                 self.con = self.connect()
-            self.con.commit()
-        except Exception as error:
-            print(error)
-        finally:
-            if self.con is not None:
-                self.con.close()
-            if self.cur is not None:
-                self.cur.close()
-
-
-    def createTable(self, tableName, schema, prefix=None):
-        try:
-            #if self.con == None:
-            self.connect()
-            print(self.con)
-            if prefix:
-                self.cur.execute(prefix)
+                # sql = "insert into " + tableName + " (" + schema  + ") values (" + data + ")"
+                sql = query
+                self.cur.execute(sql)
+                if self.con == None:
+                    self.con = self.connect()
                 self.con.commit()
-            sql = "create table if not exists " + str(tableName) + " ( " + str(schema) + " ) "
-            self.cur.execute(sql)
-            self.con.commit()
-        except Exception as error:
-            print(error)
-        finally:
-            if self.con is not None:
-                self.con.close()
-                print('aidughaiu', self.con)
-            if self.cur is not None:
-                self.cur.close()
-=======
+            except Exception as error:
+                print(error)
+            finally:
+                if self.con is not None:
+                    self.con.close()
+                if self.cur is not None:
+                    self.cur.close()
+
 
     def createTable(self, tableName, schema):
         if self.con == None:
@@ -178,5 +145,4 @@ class PostgresHandler():
                 self.cur.close()
 =======
                     self.cur.close()
-
 
