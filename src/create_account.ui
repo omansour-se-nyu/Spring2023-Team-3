@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Dialog</class>
-
  <widget class="QDialog" name="Dialog">
-=======
- <widget class="QMainWindow" name="Dialog">
-
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -154,19 +150,11 @@
     <string>Create</string>
    </property>
   </widget>
-
   <widget class="QLabel" name="label_6">
    <property name="geometry">
     <rect>
      <x>40</x>
      <y>330</y>
-=======
- <widget class="QLabel" name="label_6">
-   <property name="geometry">
-    <rect>
-     <x>65</x>
-     <y>325</y>
-
      <width>400</width>
      <height>20</height>
     </rect>
@@ -177,7 +165,6 @@
     </font>
    </property>
    <property name="text">
-
     <string/>
    </property>
    <property name="alignment">
@@ -193,12 +180,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
-=======
-    <string></string>
-   </property>
-  </widget>
- </widget>
-
  <resources/>
  <connections/>
 </ui>

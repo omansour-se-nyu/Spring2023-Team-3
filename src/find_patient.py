@@ -1,6 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import uic
-
 import menu
 
 class FindPatient(QMainWindow):
@@ -20,10 +19,3 @@ class FindPatient(QMainWindow):
         backToMenu = menu.MainMenu(self.current_user, self.role)
         backToMenu.show()
         self.close()
-=======
-
-class FindPatient(QMainWindow):
-    def __init__(self):
-        super().__init__()
-        uic.loadUi('find_patient.ui', self)
-
