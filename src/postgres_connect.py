@@ -44,6 +44,41 @@ class PostgresHandler():
                     self.cur.close()
 
     def getQuery(self, query):
+
+
+        try:
+            self.connect()
+            sql = query
+            self.cur.execute(sql)
+
+            df = DataFrame(self.cur.fetchall(),columns=['UserName', 'Password'])
+            print(df)
+            return df
+        except Exception as error:
+            print(error)
+        finally:
+            if self.con is not None:
+                self.con.close()
+            if self.cur is not None:
+                self.cur.close()
+
+    def insertData(self, query):
+        try:
+            self.connect()
+            # sql = "insert into " + tableName + " (" + schema  + ") values (" + data + ")"
+            sql = query
+            self.cur.execute(sql)
+
+            self.con.commit()
+        except Exception as error:
+            print(error)
+            return error
+        finally:
+            if self.con is not None:
+                self.con.close()
+            if self.cur is not None:
+                self.cur.close()
+=======
         if self.con == None:
             try:
                 self.con = self.connect()
@@ -78,6 +113,7 @@ class PostgresHandler():
                 if self.cur is not None:
                     self.cur.close()
 
+
     def createTable(self, tableName, schema):
         if self.con == None:
             try:
@@ -91,4 +127,22 @@ class PostgresHandler():
                 if self.con is not None:
                     self.con.close()
                 if self.cur is not None:
+
                     self.cur.close()
+
+    def exists(self,sql):
+        try:
+            self.connect()
+            self.cur.execute(sql)
+            return self.cur.fetchall()
+        except Exception as error:
+            print(error)
+            return error
+        finally:
+            if self.con is not None:
+                self.con.close()
+            if self.cur is not None:
+                self.cur.close()
+=======
+                    self.cur.close()
+
