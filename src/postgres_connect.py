@@ -45,6 +45,7 @@ class PostgresHandler():
 
     def getQuery(self, query):
 
+
         try:
             self.connect()
             sql = query
@@ -77,6 +78,41 @@ class PostgresHandler():
                 self.con.close()
             if self.cur is not None:
                 self.cur.close()
+=======
+        if self.con == None:
+            try:
+                self.con = self.connect()
+                sql = query
+                self.cur.execute(sql)
+                df = DataFrame(self.cur.fetchall())
+                print(df)
+                return df
+            except Exception as error:
+                print(error)
+            finally:
+                if self.con is not None:
+                    self.con.close()
+                if self.cur is not None:
+                    self.cur.close()
+
+    def insertData(self, query):
+        if self.con == None:
+            try:
+                self.con = self.connect()
+                # sql = "insert into " + tableName + " (" + schema  + ") values (" + data + ")"
+                sql = query
+                self.cur.execute(sql)
+                if self.con == None:
+                    self.con = self.connect()
+                self.con.commit()
+            except Exception as error:
+                print(error)
+            finally:
+                if self.con is not None:
+                    self.con.close()
+                if self.cur is not None:
+                    self.cur.close()
+
 
     def createTable(self, tableName, schema):
         if self.con == None:
@@ -91,6 +127,7 @@ class PostgresHandler():
                 if self.con is not None:
                     self.con.close()
                 if self.cur is not None:
+
                     self.cur.close()
 
     def exists(self,sql):
@@ -106,3 +143,6 @@ class PostgresHandler():
                 self.con.close()
             if self.cur is not None:
                 self.cur.close()
+=======
+                    self.cur.close()
+

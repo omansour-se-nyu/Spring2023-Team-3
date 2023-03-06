@@ -54,6 +54,7 @@
     <string>Search</string>
    </property>
   </widget>
+
   <widget class="QPushButton" name="pushButton_2">
    <property name="geometry">
     <rect>
@@ -76,6 +77,9 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+=======
+ </widget>
+
  <resources/>
  <connections/>
 </ui>
