@@ -208,7 +208,12 @@ class LoginPage(QDialog):
 
     def search(self):
         patient = findPatient.lineEdit.text()
-        print(patient)
+        df=None
+        if patient.isnumeric():
+            df=self.postgresDB.getQuery('select * from patients where id=='+patient)
+        else:
+            df=self.postgresDB.getQuery('select * from patients where name=='+patient)
+        print(df)
 
 
     def unhash(self, hashed_password): #implement unhashing
