@@ -7,7 +7,7 @@ from src.find_patient import FindPatient
 from src.postgres_connect import PostgresHandler
 import create_account
 import bcrypt
-=======
+
 from src.menu import MainMenu
 from src.find_patient import FindPatient
 from src.postgres_connect import PostgresHandler
@@ -135,7 +135,6 @@ class LoginPage(QDialog):
 
         return result.decode("utf-8")
 
-=======
         self.role = ""
         if self.radioButton.isChecked():
             self.role = "Medical Staff"
