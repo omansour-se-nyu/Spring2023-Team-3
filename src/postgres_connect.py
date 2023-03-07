@@ -51,8 +51,6 @@ class PostgresHandler():
             sql = query
             self.cur.execute(sql)
             df = DataFrame(self.cur.fetchall())
-=======
-
 
         try:
             self.connect()
@@ -71,8 +69,6 @@ class PostgresHandler():
             if self.cur is not None:
                 self.cur.close()
 
-=======
-
     def insertData(self, query):
         try:
             self.connect()
@@ -89,7 +85,7 @@ class PostgresHandler():
                 self.con.close()
             if self.cur is not None:
                 self.cur.close()
-=======
+
         if self.con == None:
             try:
                 self.con = self.connect()
@@ -105,7 +101,6 @@ class PostgresHandler():
                     self.con.close()
                 if self.cur is not None:
                     self.cur.close()
-
 
     def insertData(self, query):
         try:
@@ -145,7 +140,6 @@ class PostgresHandler():
                 print('aidughaiu', self.con)
             if self.cur is not None:
                 self.cur.close()
-=======
 
     def createTable(self, tableName, schema):
         if self.con == None:
@@ -176,7 +170,6 @@ class PostgresHandler():
                 self.con.close()
             if self.cur is not None:
                 self.cur.close()
-=======
                     self.cur.close()
 
 
