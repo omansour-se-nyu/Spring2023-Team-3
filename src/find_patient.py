@@ -20,7 +20,6 @@ class FindPatient(QMainWindow):
         backToMenu = menu.MainMenu(self.current_user, self.role)
         backToMenu.show()
         self.close()
-=======
 
 class FindPatient(QMainWindow):
     def __init__(self):
