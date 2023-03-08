@@ -1,0 +1,5 @@
+bcrypt==4.0.1
+pandas==1.5.3
+psycopg2-binary==2.9.5
+PyQt5==5.15.9
+pyqt5-tools==5.15.4.3.2
