@@ -6,7 +6,7 @@ The MentCare project allows medical staff at a mental hospital to store informat
 Installation
 -----------------
 `$ git clone https://github.com/omansour-se-nyu/Spring2023-Team-3.git`  
-`$ cd Spring2023-Team`  
+`$ cd Spring2023-Team-3`  
 `$ pip install -r requirements.txt
 # Running
 -----------------
