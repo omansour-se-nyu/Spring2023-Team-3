@@ -1,10 +1,11 @@
 import sys
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QDialog
-from src.menu import MainMenu
+import menu
 from src.find_patient import FindPatient
 from src.postgres_connect import PostgresHandler
-from src.create_account import CreateAccount
+import create_account
+import bcrypt
 
 class LoginPage(QDialog):
     def __init__(self, postgresDB):
@@ -18,84 +19,114 @@ class LoginPage(QDialog):
     def login(self):
         self.current_user = self.lineEdit.text()
         self.current_password = self.lineEdit_2.text()
-        self.role = ""
-        if self.radioButton.isChecked():
-            self.role = "Medical Staff"
-        if self.radioButton2.isChecked():
-            self.role = "Admin"
+        self.hashed_current_password = self.hash(self.current_password)
+        self.role = self.roleSelection()
+        # if self.radioButton.isChecked():
+        #     self.role = "Medical Staff"
+        # if self.radioButton2.isChecked():
+        #     self.role = "Admin"
+        if self.role == None:
+            self.label_6.setText("Please select a role.")
+            return False
         if not self.is_valid_user():
             print("Not a registered account")
             self.label_6.setText("User not registered - please sign up or try again.")
+            return False
         else:
-            global menu
-            menu = MainMenu()
+            global Menu
+            Menu = menu.MainMenu(self.current_user, self.role)
             QApplication.processEvents()
-            menu.label_2.setText("Logged in as: " + self.current_user)
-            menu.label_3.setText("Role: " + self.role)
-            menu.show()
-            menu.pushButton.clicked.connect(self.find_patient)
+            #menu.label_2.setText("Logged in as: " + self.current_user)
+            #menu.label_3.setText("Role: " + self.role)
+            Menu.show()
+            #menu.pushButton.clicked.connect(self.find_patient)
             self.close()
-
-    def medical_selected(self):
+            return True
+    def roleSelection(self):
         if self.radioButton.isChecked():
-            self.role = "Medical Staff"
-            print("Medical Staff")
+            return "Medical Staff"
+        elif self.radioButton2.isChecked():
+            return "Admin"
 
-    def admin_selected(self):
-        if self.radioButton2.isChecked():
-            self.role = "Admin"
-            print("Admin")
+    # def medical_selected(self):
+    #     if self.radioButton.isChecked():
+    #         self.role = "Medical Staff"
+    #         print("Medical Staff")
+    #         return "Medical Staff"
+    #
+    # def admin_selected(self):
+    #     if self.radioButton2.isChecked():
+    #         self.role = "Admin"
+    #         print("Admin")
+    #         return
 
     def create_account(self): #still need to implement create account logic (connection being lost)
-        global create_account
-        create_account = CreateAccount(self.postgresDB)
-        create_account.pushButton_2.clicked.connect(self.register)
-        create_account.pushButton.clicked.connect(self.back_to_login)
-        create_account.show()
+        global new_account
+        new_account = create_account.CreateAccount(self.postgresDB)
+        #create_account.pushButton_2.clicked.connect(create_account.register)
+        #create_account.pushButton.clicked.connect(self.back_to_login)
+        new_account.show()
         self.close()
 
-    def back_to_login(self):
-        login_page.show()
-        create_account.close()
+    # def back_to_login(self):
+    #     login_page.show()
+    #     create_account.close()
 
-    def register(self):
-        create_user = create_account.lineEdit.text()
-        create_password = create_account.lineEdit_2.text()
-        create_user = "'%s'" % create_user
-        create_password = "'%s'" % create_password
-        query = 'insert into "Security".login(username,password) values(' + create_user + "," + create_password + ")"
-        print(query)
-        # self.postgresDB.insertData(query)
-        create_account.postgresDB.insertData(query)
+    # def register(self):
+    #     create_user = create_account.lineEdit.text()
+    #     create_password = create_account.lineEdit_2.text()
+    #     create_user = "'%s'" % create_user
+    #     create_password = "'%s'" % create_password
+    #     query = 'insert into "Security".login(username,password) values(' + create_user + "," + create_password + ")"
+    #     print(query)
+    #     # self.postgresDB.insertData(query)
+    #     create_account.postgresDB.insertData(query)
+
+
 
     def is_valid_user(self):
-        account_df = self.postgresDB.getQuery('select * from "Security".login')
-        print(account_df)
-        rslt_df = account_df[account_df[0] == self.current_user]
-        print(rslt_df.at[0, 1])
-        hashed_password = rslt_df.at[0, 1]
-        # unhashed_password = self.unhash(rslt_df.at[0, 1])
-        if self.current_password == hashed_password:
-            print("Registered account")
-            return True
+        self.username  = "'%s'" % self.current_user
+        self.account_df = self.postgresDB.getQuery('select * from "Security".login where username =  ' + self.username)
+
+        #account_df.reset_index()
+        print(self.account_df)
+        for index, row in self.account_df.iterrows():
+            #test whether the sign in password is same with the hashed password stored in database
+            if bcrypt.hashpw(self.current_password.encode('utf-8'),row['Password'].encode('utf-8')).decode('UTF-8') == row['Password']:
+                print("Registered account")
+                return True
+
         return False
 
-    def find_patient(self):
-        global findPatient
-        findPatient = FindPatient()
-        QApplication.processEvents()
-        findPatient.show()
-        findPatient.pushButton.clicked.connect(self.search)
-        menu.close()
 
-    def search(self):
-        patient = findPatient.lineEdit.text()
-        df=None
-        if patient.isnumeric():
-            df=self.postgresDB.getQuery('select * from patients where id=='+patient)
-        else:
-            df=self.postgresDB.getQuery('select * from patients where name=='+patient)
-        print(df)
+
+
+
+
+
+    # def find_patient(self):
+    #     global findPatient
+    #     findPatient = FindPatient()
+    #     QApplication.processEvents()
+    #     findPatient.show()
+    #     findPatient.pushButton.clicked.connect(self.search)
+    #     menu.close()
+
+    # def search(self):
+    #     patient = findPatient.lineEdit.text()
+    #     print(patient)
+
+    def hash(self, password):
+        bytes = password.encode('utf-8')
+
+        # gen salt
+        salt = bcrypt.gensalt()
+
+        # Hashing the password
+        result = bcrypt.hashpw(bytes, salt)
+
+        return result.decode("utf-8")
+
 
     def unhash(self, hashed_password): #implement unhashing
         pass
