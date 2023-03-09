@@ -1,4 +1,3 @@
-
 from PyQt5.QtWidgets import QMainWindow, QDialog
 from PyQt5 import uic
 import bcrypt
@@ -6,17 +5,10 @@ import login
 
 
 class CreateAccount(QDialog):
-=======
-from PyQt5.QtWidgets import QMainWindow
-from PyQt5 import uic
-
-class CreateAccount(QMainWindow):
-
     def __init__(self, postgresDB):
         super().__init__()
         uic.loadUi('create_account.ui', self)
         self.postgresDB = postgresDB
-
         self.pushButton_2.clicked.connect(self.register)
         self.pushButton.clicked.connect(self.back_to_login)
 
@@ -58,6 +50,4 @@ class CreateAccount(QMainWindow):
         back.show()
         self.close()
 
-
-=======
 

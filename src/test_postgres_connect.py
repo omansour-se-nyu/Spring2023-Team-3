@@ -9,8 +9,8 @@ def test_PostgresHandler_connect_false():
 def test_PostgresHandler_connect_True():
     db = PostgresHandler('mentcare.cfteod2es6ye.us-east-1.rds.amazonaws.com', 5432, 'postgres', '(mfgaH3)', 'MentCare')
     db.connect()
-    print('AAAAAAAAAAA', db.cur)
-    assert not db.cur
+
+    assert db.cur
 
 def test_PostgresHandler_getQuery_true():
     db = PostgresHandler('mentcare.cfteod2es6ye.us-east-1.rds.amazonaws.com', 5432, 'postgres', '(mfgaH3)', 'MentCare')
