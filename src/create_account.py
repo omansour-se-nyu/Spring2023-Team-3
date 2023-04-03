@@ -1,4 +1,5 @@
 import os
+import sys
 from PyQt5.QtWidgets import QMainWindow, QDialog
 from PyQt5 import uic
 import bcrypt

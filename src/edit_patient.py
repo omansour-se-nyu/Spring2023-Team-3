@@ -17,6 +17,7 @@ class EditPatient(QMainWindow):
         self.pushButton.clicked.connect(self.check_record)
         self.pushButton_2.clicked.connect(self.back_to_menu)
         self.pushButton_3.clicked.connect(self.edit_patient)
+        self.pushButton_4.clicked.connect(self.edit_medication)
         self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
                                                            config.remote_postgre["port"],
                                                            config.remote_postgre["username"],
@@ -25,8 +26,12 @@ class EditPatient(QMainWindow):
 
     def edit_patient(self):
         option = self.comboBox.currentText()
-        content = "'%s'" %  self.lineEdit_2.text()
-        self.df = self.postgresDB.insertData('update public.patients set ' + option + ' = ' + content + ' where patients.id = ' + self.patientid)
+        content = "'%s'" % self.lineEdit_2.text()
+        self.df = self.postgresDB.insertData('update public.patients set ' + option + ' = ' + content + ' where id = ' + self.patientid)
+
+    def edit_medication(self):
+        content = "'%s'" % self.lineEdit_3.text()
+        self.df = self.postgresDB.insertData('update public.records set content = ' + content + ' where id = ' + self.patientid)
 
     def back_to_menu(self):
         global backToMenu
