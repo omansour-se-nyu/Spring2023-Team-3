@@ -1,6 +1,7 @@
+import os
 import sys
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QDialog
+from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit
 import menu
 from src.find_patient import FindPatient
 from src.postgres_connect import PostgresHandler
@@ -9,8 +10,10 @@ import bcrypt
 
 class LoginPage(QDialog):
     def __init__(self, postgresDB):
-        super().__init__()
-        uic.loadUi('login.ui', self)
+        super().__init__()      
+        var = os.path.dirname(os.path.abspath(__file__)) + "/login.ui"
+        uic.loadUi(var, self)
+        self.lineEdit_2.setEchoMode(QLineEdit.Password)
         self.pushButton_2.clicked.connect(self.login)
         self.pushButton.clicked.connect(self.create_account)
         self.current_user = None
@@ -86,23 +89,20 @@ class LoginPage(QDialog):
 
     def is_valid_user(self):
         self.username  = "'%s'" % self.current_user
-        self.account_df = self.postgresDB.getQuery('select * from "Security".login where username =  ' + self.username)
+        cols = ['username', 'password']
+        self.account_df = self.postgresDB.getRow('select username, password from "Security".login where username =  ' + self.username, cols)
 
-        #account_df.reset_index()
+        if self.account_df is None:
+            return False
+        
         print(self.account_df)
         for index, row in self.account_df.iterrows():
             #test whether the sign in password is same with the hashed password stored in database
-            if bcrypt.hashpw(self.current_password.encode('utf-8'),row['Password'].encode('utf-8')).decode('UTF-8') == row['Password']:
+            if bcrypt.hashpw(self.current_password.encode('utf-8'),row['password'].encode('utf-8')).decode('UTF-8') == row['password']:
                 print("Registered account")
                 return True
 
         return False
-
-
-
-
-
-
 
     # def find_patient(self):
     #     global findPatient

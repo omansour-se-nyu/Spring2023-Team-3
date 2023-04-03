@@ -122,7 +122,7 @@
    </item>
    <item>
     <property name="text">
-     <string>Others</string>
+     <string>Other</string>
     </property>
    </item>
   </widget>
@@ -367,7 +367,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Cancel</string>
+    <string>Back</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_2">

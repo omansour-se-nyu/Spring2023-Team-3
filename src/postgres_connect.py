@@ -43,14 +43,13 @@ class PostgresHandler():
                 if self.cur is not None:
                     self.cur.close()
 
-    def getQuery(self, query):
-
+    def getRow(self, query, cols): 
         try:
             self.connect()
             sql = query
             self.cur.execute(sql)
 
-            df = DataFrame(self.cur.fetchall(),columns=['UserName', 'Password'])
+            df = DataFrame(self.cur.fetchall(), columns = cols)
             print(df)
             return df
         except Exception as error:
@@ -67,7 +66,6 @@ class PostgresHandler():
             # sql = "insert into " + tableName + " (" + schema  + ") values (" + data + ")"
             sql = query
             self.cur.execute(sql)
-
             self.con.commit()
         except Exception as error:
             print(error)

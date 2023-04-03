@@ -4,13 +4,16 @@ import menu
 import postgres_connect
 import config
 from random import randint
+import os
+from datetime import datetime, timezone
 
 class CreatePatient(QDialog):
     def __init__(self, current_user, role):
         super().__init__()
         self.current_user = current_user
         self.role = role
-        uic.loadUi('create_patient.ui', self)
+        var = os.path.dirname(os.path.abspath(__file__)) + "/create_patient.ui"
+        uic.loadUi(var, self)
         self.label_9.setText("")
         self.label_12.setText("")
         self.label_10.setText("")
@@ -27,11 +30,12 @@ class CreatePatient(QDialog):
     # the button with Save
     def register(self):
         n = 8
+        
         id = ''.join(["{}".format(randint(0, 9)) for num in range(0, n)])
         while self.id_existed(id):
             id = ''.join(["{}".format(randint(0, 9)) for num in range(0, n)])
-
         self.patient_id = id
+
         self.patient_name = self.lineEdit.text()
         self.patient_email = self.lineEdit_3.text()
         self.patient_gender = self.comboBox.currentText()
@@ -70,7 +74,6 @@ class CreatePatient(QDialog):
         # print(self.patient_phone)
         # print(self.patient_ssn)
 
-
         tableName = '"public".patients'
         schema = 'id, name, gender, age, ssn, phone, email, address'
         data = self.patient_id + "," + self.patient_name + "," \
@@ -80,11 +83,35 @@ class CreatePatient(QDialog):
         sql = "insert into " + tableName + " (" + schema + ") values (" + data + ")"
         self.postgresDB.insertData(sql)
 
+        id = ''.join(["{}".format(randint(0, 9)) for num in range(0, n)])
+        while self.record_id_existed(id):
+            id = ''.join(["{}".format(randint(0, 9)) for num in range(0, n)])
+        id = "'%s'" % id
+
+        now = datetime.now() 
+        date_time = now.strftime('%m-%d-%Y %H:%M:%S')
+        date_time = "'%s'" % date_time
+
+        tableName = '"public".records'
+        schema = 'id, record_id, last_modified, content'
+        default = 'none'
+        default = "'%s'" % default
+        data = self.patient_id + ',' + id + ',' + date_time + ',' + default
+
+        sql = "insert into " + tableName + " (" + schema + ") values (" + data + ")"
+        self.postgresDB.insertData(sql)
 
 
     def id_existed(self, id):
         id = "'%s'" %id
-        sql = 'select id from "public".patients where  id =' + id
+        sql = 'select id from "public".patients where id =' + id
+        if self.postgresDB.exists(sql):
+            return True
+        return False
+    
+    def record_id_existed(self, id):
+        id = "'%s'" %id
+        sql = 'select record_id from "public".records where record_id =' + id
         if self.postgresDB.exists(sql):
             return True
         return False
