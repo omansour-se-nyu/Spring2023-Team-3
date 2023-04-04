@@ -3,8 +3,7 @@ import sys
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit
 import menu
-from src.find_patient import FindPatient
-from src.postgres_connect import PostgresHandler
+import postgres_connect
 import create_account
 import bcrypt
 
@@ -132,7 +131,7 @@ class LoginPage(QDialog):
         pass
 
 if __name__ == '__main__':
-    postgresDB = PostgresHandler('mentcare.cfteod2es6ye.us-east-1.rds.amazonaws.com', 5432, 'postgres', '(mfgaH3)', 'MentCare')
+    postgresDB = postgres_connect.PostgresHandler('mentcare.cfteod2es6ye.us-east-1.rds.amazonaws.com', 5432, 'postgres', '(mfgaH3)', 'MentCare')
     app = QApplication(sys.argv)
     global login_page
     login_page = LoginPage(postgresDB)
