@@ -1,13 +1,15 @@
+import os
+import sys
 from PyQt5.QtWidgets import QMainWindow, QDialog
 from PyQt5 import uic
 import bcrypt
 import login
 
-
 class CreateAccount(QDialog):
     def __init__(self, postgresDB):
         super().__init__()
-        uic.loadUi('create_account.ui', self)
+        var = os.path.dirname(os.path.abspath(__file__)) + "/create_account.ui"
+        uic.loadUi(var, self)
         self.postgresDB = postgresDB
         self.pushButton_2.clicked.connect(self.register)
         self.pushButton.clicked.connect(self.back_to_login)
