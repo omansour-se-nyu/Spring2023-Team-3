@@ -1,5 +1,6 @@
 create table login (
 id varchar(8) primary key 
+role varchar(16) not null
 username varchar(32) not null
 password varchar(32) not null
 );
