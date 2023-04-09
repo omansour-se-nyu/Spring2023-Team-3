@@ -1,7 +1,8 @@
 create table login (
-id varchar(8) primary key 
+id varchar(8) primary key
+isAdmin boolean not null
 username varchar(32) not null
-password varchar(32) not null
+password varchar(64) not null
 );
 
 create table patients (
@@ -12,6 +13,7 @@ ssn varchar(9) unique not null
 phone varchar(10)
 email varchar(30)
 address varchar(200)
+birth_date date	not null
 );
 
 create table records (
