@@ -21,10 +21,11 @@ class PostgresHandler():
                 password = self.password,
                 database = self.database
             )
-            print(self.con)
             self.cur = self.con.cursor()
+            return 1
         except Exception as error:
             print(error)
+            return 0
 
     def getData(self, tableName):
         if self.con == None:

@@ -3,7 +3,7 @@ from postgres_connect import PostgresHandler
 schema_login= "username varchar(30) unique not null, password varchar(30) not null"
 
 # table: patient \
-#             -> id: varchar
+#             -> id: varchar (primary key)
 #             -> name: varchar
 #             -> gender: enumerate
 #             -> age: int
@@ -15,8 +15,8 @@ prefix_patients="create type gen as enum('Male', 'Female', 'Other')"
 schema_patients="id varchar(8) unique not null, name varchar(30), gender gen, age smallint not null, ssn varchar(9) unique not null, phone varchar(10), email varchar(30), address varchar(200)"
 
 # table: records \
-#             -> id: varchar
-#             -> record_id: varchar
+#             -> id: varchar 
+#             -> record_id: varchar (primary key)
 #             -> last_modified: timestamp
 #             -> content: text
 schema_records="id varchar(8) unique not null, record_id varchar(8) unique not null, last_modified timestamp, content text"
