@@ -21,7 +21,7 @@ class PostgresHandler():
                 password = self.password,
                 database = self.database
             )
-            print(self.con)
+            # print(self.con)
             self.cur = self.con.cursor()
         except Exception as error:
             print(error)
@@ -33,7 +33,7 @@ class PostgresHandler():
                 sql = "select * from " + str(tableName)
                 self.cur.execute(sql)
                 df = DataFrame(self.cur.fetchall())
-                print(df)
+                df.style
                 return df
             except Exception as error:
                 print(error)
@@ -43,14 +43,30 @@ class PostgresHandler():
                 if self.cur is not None:
                     self.cur.close()
 
-    def getQuery(self, query):
-
+    def getRow(self, query):
         try:
             self.connect()
             sql = query
             self.cur.execute(sql)
 
-            df = DataFrame(self.cur.fetchall(),columns=['UserName', 'Password'])
+            df = self.cur.fetchone()
+            print(df)
+            return df
+        except Exception as error:
+            print(error)
+        finally:
+            if self.con is not None:
+                self.con.close()
+            if self.cur is not None:
+                self.cur.close()
+
+    def getRowAll(self, query, cols):
+        try:
+            self.connect()
+            sql = query
+            self.cur.execute(sql)
+
+            df = DataFrame(self.cur.fetchall(), columns = cols)
             print(df)
             return df
         except Exception as error:
@@ -67,7 +83,6 @@ class PostgresHandler():
             # sql = "insert into " + tableName + " (" + schema  + ") values (" + data + ")"
             sql = query
             self.cur.execute(sql)
-
             self.con.commit()
         except Exception as error:
             print(error)

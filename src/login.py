@@ -1,20 +1,32 @@
+import os
 import sys
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QDialog
+from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QFrame
 import menu
-from src.find_patient import FindPatient
-from src.postgres_connect import PostgresHandler
+import postgres_connect
 import create_account
 import bcrypt
 
 class LoginPage(QDialog):
     def __init__(self, postgresDB):
         super().__init__()
-        uic.loadUi('login.ui', self)
+        self.set_ui()
+        var = os.path.dirname(os.path.abspath(__file__)) + "/login.ui"
+        uic.loadUi(var, self)
+        self.lineEdit_2.setEchoMode(QLineEdit.Password)
         self.pushButton_2.clicked.connect(self.login)
         self.pushButton.clicked.connect(self.create_account)
         self.current_user = None
         self.postgresDB = postgresDB
+
+
+    def set_ui(self):
+        self.frame = QFrame(self)
+        self.frame.resize(150,150)
+        self.frame.move(160, -5)
+        var = os.path.dirname(os.path.abspath(__file__)) + "/IMG/python-logo.png"
+        self.frame.setStyleSheet(
+            'background-image: url(' + var + '); background-repeat: no-repeat; text-align:center;')
 
     def login(self):
         self.current_user = self.lineEdit.text()
@@ -28,13 +40,14 @@ class LoginPage(QDialog):
         if self.role == None:
             self.label_6.setText("Please select a role.")
             return False
+
         if not self.is_valid_user():
             print("Not a registered account")
             self.label_6.setText("User not registered - please sign up or try again.")
             return False
         else:
             global Menu
-            Menu = menu.MainMenu(self.current_user, self.role)
+            Menu = menu.MainMenu(self.account_df[0],self.current_user, self.role)
             QApplication.processEvents()
             #menu.label_2.setText("Logged in as: " + self.current_user)
             #menu.label_3.setText("Role: " + self.role)
@@ -44,9 +57,9 @@ class LoginPage(QDialog):
             return True
     def roleSelection(self):
         if self.radioButton.isChecked():
-            return "Medical Staff"
+            return False
         elif self.radioButton2.isChecked():
-            return "Admin"
+            return True
 
     # def medical_selected(self):
     #     if self.radioButton.isChecked():
@@ -86,23 +99,24 @@ class LoginPage(QDialog):
 
     def is_valid_user(self):
         self.username  = "'%s'" % self.current_user
-        self.account_df = self.postgresDB.getQuery('select * from "Security".login where username =  ' + self.username)
+        #cols = ['id', 'isadmin','username', 'password']
+        self.account_df = self.postgresDB.getRow('select id, isadmin, username, password '
+                                                 'from "mentcare".login where username =  ' + self.username)
 
-        #account_df.reset_index()
-        print(self.account_df)
-        for index, row in self.account_df.iterrows():
-            #test whether the sign in password is same with the hashed password stored in database
-            if bcrypt.hashpw(self.current_password.encode('utf-8'),row['Password'].encode('utf-8')).decode('UTF-8') == row['Password']:
-                print("Registered account")
-                return True
+        if self.account_df is None:
+            return False
+        
+        if bcrypt.hashpw(self.current_password.encode('utf-8'), self.account_df[3].encode('utf-8')).decode('UTF-8') \
+                == self.account_df[3] and self.role==self.account_df[1]:
+            print("Registered account")
+            return True
+        # for index, row in self.account_df.iterrows():
+        #     #test whether the sign in password is same with the hashed password stored in database
+        #     if bcrypt.hashpw(self.current_password.encode('utf-8'),row['password'].encode('utf-8')).decode('UTF-8') == row['password']:
+        #         print("Registered account")
+        #         return True
 
         return False
-
-
-
-
-
-
 
     # def find_patient(self):
     #     global findPatient
@@ -132,7 +146,7 @@ class LoginPage(QDialog):
         pass
 
 if __name__ == '__main__':
-    postgresDB = PostgresHandler('mentcare.cfteod2es6ye.us-east-1.rds.amazonaws.com', 5432, 'postgres', '(mfgaH3)', 'MentCare')
+    postgresDB = postgres_connect.PostgresHandler('mentcare.cfteod2es6ye.us-east-1.rds.amazonaws.com', 5432, 'postgres', '(mfgaH3)', 'MentCare')
     app = QApplication(sys.argv)
     global login_page
     login_page = LoginPage(postgresDB)
