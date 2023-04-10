@@ -21,11 +21,10 @@ class PostgresHandler():
                 password = self.password,
                 database = self.database
             )
+            # print(self.con)
             self.cur = self.con.cursor()
-            return 1
         except Exception as error:
             print(error)
-            return 0
 
     def getData(self, tableName):
         if self.con == None:
@@ -34,7 +33,7 @@ class PostgresHandler():
                 sql = "select * from " + str(tableName)
                 self.cur.execute(sql)
                 df = DataFrame(self.cur.fetchall())
-                print(df)
+                df.style
                 return df
             except Exception as error:
                 print(error)
@@ -44,7 +43,24 @@ class PostgresHandler():
                 if self.cur is not None:
                     self.cur.close()
 
-    def getRow(self, query, cols): 
+    def getRow(self, query):
+        try:
+            self.connect()
+            sql = query
+            self.cur.execute(sql)
+
+            df = self.cur.fetchone()
+            print(df)
+            return df
+        except Exception as error:
+            print(error)
+        finally:
+            if self.con is not None:
+                self.con.close()
+            if self.cur is not None:
+                self.cur.close()
+
+    def getRowAll(self, query, cols):
         try:
             self.connect()
             sql = query
