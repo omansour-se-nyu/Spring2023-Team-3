@@ -1,7 +1,7 @@
 import os
 import sys
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit
+from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QFrame
 import menu
 import postgres_connect
 import create_account
@@ -9,7 +9,8 @@ import bcrypt
 
 class LoginPage(QDialog):
     def __init__(self, postgresDB):
-        super().__init__()      
+        super().__init__()
+        self.set_ui()
         var = os.path.dirname(os.path.abspath(__file__)) + "/login.ui"
         uic.loadUi(var, self)
         self.lineEdit_2.setEchoMode(QLineEdit.Password)
@@ -17,6 +18,15 @@ class LoginPage(QDialog):
         self.pushButton.clicked.connect(self.create_account)
         self.current_user = None
         self.postgresDB = postgresDB
+
+
+    def set_ui(self):
+        self.frame = QFrame(self)
+        self.frame.resize(150,150)
+        self.frame.move(160, -5)
+        var = os.path.dirname(os.path.abspath(__file__)) + "/IMG/python-logo.png"
+        self.frame.setStyleSheet(
+            'background-image: url(' + var + '); background-repeat: no-repeat; text-align:center;')
 
     def login(self):
         self.current_user = self.lineEdit.text()
@@ -30,13 +40,14 @@ class LoginPage(QDialog):
         if self.role == None:
             self.label_6.setText("Please select a role.")
             return False
+
         if not self.is_valid_user():
             print("Not a registered account")
             self.label_6.setText("User not registered - please sign up or try again.")
             return False
         else:
             global Menu
-            Menu = menu.MainMenu(self.current_user, self.role)
+            Menu = menu.MainMenu(self.account_df[0],self.current_user, self.role)
             QApplication.processEvents()
             #menu.label_2.setText("Logged in as: " + self.current_user)
             #menu.label_3.setText("Role: " + self.role)
@@ -46,9 +57,9 @@ class LoginPage(QDialog):
             return True
     def roleSelection(self):
         if self.radioButton.isChecked():
-            return "Medical Staff"
+            return False
         elif self.radioButton2.isChecked():
-            return "Admin"
+            return True
 
     # def medical_selected(self):
     #     if self.radioButton.isChecked():
@@ -88,18 +99,22 @@ class LoginPage(QDialog):
 
     def is_valid_user(self):
         self.username  = "'%s'" % self.current_user
-        cols = ['username', 'password']
-        self.account_df = self.postgresDB.getRow('select username, password from "Security".login where username =  ' + self.username, cols)
+        #cols = ['id', 'isadmin','username', 'password']
+        self.account_df = self.postgresDB.getRow('select id, isadmin, username, password '
+                                                 'from "mentcare".login where username =  ' + self.username)
 
         if self.account_df is None:
             return False
         
-        print(self.account_df)
-        for index, row in self.account_df.iterrows():
-            #test whether the sign in password is same with the hashed password stored in database
-            if bcrypt.hashpw(self.current_password.encode('utf-8'),row['password'].encode('utf-8')).decode('UTF-8') == row['password']:
-                print("Registered account")
-                return True
+        if bcrypt.hashpw(self.current_password.encode('utf-8'), self.account_df[3].encode('utf-8')).decode('UTF-8') \
+                == self.account_df[3] and self.role==self.account_df[1]:
+            print("Registered account")
+            return True
+        # for index, row in self.account_df.iterrows():
+        #     #test whether the sign in password is same with the hashed password stored in database
+        #     if bcrypt.hashpw(self.current_password.encode('utf-8'),row['password'].encode('utf-8')).decode('UTF-8') == row['password']:
+        #         print("Registered account")
+        #         return True
 
         return False
 

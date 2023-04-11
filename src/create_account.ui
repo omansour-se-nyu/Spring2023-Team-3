@@ -82,7 +82,7 @@
    <property name="geometry">
     <rect>
      <x>100</x>
-     <y>210</y>
+     <y>200</y>
      <width>211</width>
      <height>20</height>
     </rect>
@@ -100,7 +100,7 @@
    <property name="geometry">
     <rect>
      <x>100</x>
-     <y>240</y>
+     <y>230</y>
      <width>271</width>
      <height>21</height>
     </rect>
@@ -110,7 +110,7 @@
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>370</y>
+     <y>380</y>
      <width>131</width>
      <height>20</height>
     </rect>
@@ -128,7 +128,7 @@
    <property name="geometry">
     <rect>
      <x>220</x>
-     <y>360</y>
+     <y>370</y>
      <width>121</width>
      <height>41</height>
     </rect>
@@ -141,7 +141,7 @@
    <property name="geometry">
     <rect>
      <x>170</x>
-     <y>280</y>
+     <y>330</y>
      <width>113</width>
      <height>32</height>
     </rect>
@@ -154,7 +154,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>330</y>
+     <y>300</y>
      <width>400</width>
      <height>20</height>
     </rect>
@@ -170,6 +170,50 @@
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
+  </widget>
+  <widget class="QLabel" name="label_7">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>270</y>
+     <width>211</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>15</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Select your role</string>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>260</y>
+     <width>141</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="locale">
+    <locale language="English" country="UnitedStates"/>
+   </property>
+   <property name="currentText">
+    <string>Medical Staff</string>
+   </property>
+   <item>
+    <property name="text">
+     <string>Medical Staff</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Admin</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <resources/>

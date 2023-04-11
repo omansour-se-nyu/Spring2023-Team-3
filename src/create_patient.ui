@@ -165,8 +165,8 @@
   <widget class="QLabel" name="label_5">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>330</y>
+     <x>90</x>
+     <y>480</y>
      <width>91</width>
      <height>21</height>
     </rect>
@@ -302,29 +302,11 @@
     <string/>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit_5">
-   <property name="geometry">
-    <rect>
-     <x>170</x>
-     <y>290</y>
-     <width>241</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>17</pointsize>
-    </font>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_11">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>290</y>
+     <x>70</x>
+     <y>370</y>
      <width>91</width>
      <height>21</height>
     </rect>
@@ -335,7 +317,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Age</string>
+    <string>Birth Date</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
@@ -361,7 +343,7 @@
    <property name="geometry">
     <rect>
      <x>180</x>
-     <y>520</y>
+     <y>530</y>
      <width>91</width>
      <height>31</height>
     </rect>
@@ -374,7 +356,7 @@
    <property name="geometry">
     <rect>
      <x>310</x>
-     <y>520</y>
+     <y>530</y>
      <width>91</width>
      <height>31</height>
     </rect>
@@ -387,7 +369,7 @@
    <property name="geometry">
     <rect>
      <x>170</x>
-     <y>330</y>
+     <y>480</y>
      <width>241</width>
      <height>31</height>
     </rect>
@@ -399,6 +381,16 @@
    </property>
    <property name="text">
     <string/>
+   </property>
+  </widget>
+  <widget class="QCalendarWidget" name="calendarWidget">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>290</y>
+     <width>296</width>
+     <height>173</height>
+    </rect>
    </property>
   </widget>
  </widget>

@@ -7,6 +7,7 @@ import os
 import pandas as pd
 from PyQt5.QtWidgets import QApplication, QTableView
 from PyQt5.QtCore import QAbstractTableModel, Qt
+import prompt_dialog
 
 class pandasModel(QAbstractTableModel):
 
@@ -33,8 +34,9 @@ class pandasModel(QAbstractTableModel):
 
 
 class FindPatient(QMainWindow):
-    def __init__(self, current_user, role):
+    def __init__(self, uid, current_user, role):
         super().__init__()
+        self.id = uid
         self.current_user = current_user
         self.role = role
         var = os.path.dirname(os.path.abspath(__file__)) + "/find_patient.ui"
@@ -49,33 +51,42 @@ class FindPatient(QMainWindow):
 
     def back_to_menu(self):
         global backToMenu
-        backToMenu = menu.MainMenu(self.current_user, self.role)
+        backToMenu = menu.MainMenu(self.id, self.current_user, self.role)
         backToMenu.show()
         self.close()
 
     def search(self):
         self.patient = self.lineEdit.text()
         self.patientid = "'%s'" % self.patient
-        cols = ['id', 'name', 'gender', 'age', 'ssn', 'phone', 'email', 'address']
-        self.df = self.postgresDB.getRow('select * from public.patients where id = ' + self.patientid + ' or patients.name = ' + self.patientid, cols)
 
-        for index, row in self.df.iterrows():
-            self.patientid = "'%s'" % row['id']
-            break
+        self.df = self.postgresDB.getRow('select * from "mentcare".patients where id = ' + self.patientid
+                                         + ' or patients.name = ' + self.patientid)
+        if self.df is None:
+            global prompt
+            prompt = prompt_dialog.Prompt("Can't find the patient")
+            prompt.show()
+            return False
+        patients_cols = ['id', 'name', 'gender', 'ssn', 'phone', 'email', 'address', 'birth_date']
+        patient_info = pd.DataFrame(list(self.df), patients_cols)
+        print(patient_info.shape)
+        self.patientid = "'%s'" % self.df[0]
 
-        cols = ['id', 'record_id', 'last_modified', 'content']
-        record = self.postgresDB.getRow('select * from public.records where id = ' + self.patientid, cols)
+        records_cols = ['patient_id', 'doctor_id', 'record_id', 'last_modified', 'content']
+        record = self.postgresDB.getRowAll('select * from mentcare.records where patient_id = ' + self.patientid, records_cols)
         #comb = record.append(self.df, ignore_index=True)
 
-        model = pandasModel(self.df)
+        model = pandasModel(patient_info)
         self.tableView.setModel(model)
-        self.tableView.resize(200, 100)
+        #self.tableView.resize(200, 100)
         self.tableView.show()
 
-        model = pandasModel(record)
-        self.tableView_2.setModel(model)
-        self.tableView_2.resize(200, 100)
-        self.tableView_2.show()
+        if record is not None:
+            model = pandasModel(record)
+            self.tableView_2.setModel(model)
+            #self.tableView_2.resize(200, 100)
+            self.tableView_2.show()
+
+
 
 
 
