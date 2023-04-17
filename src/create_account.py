@@ -55,8 +55,8 @@ class CreateAccount(QDialog):
         query = 'insert into "mentcare".login(id, isadmin, username, password) ' \
                 'values(' + self.login_id + ","  + self.isadmin + ","  + self.create_user + "," + self.hashed_passworf + ")"
         print(query)
-        # self.postgresDB.insertData(query)
         exception = self.postgresDB.insertData(query)
+        # exception = self.postgresDB.executeSql(query)
         if exception == None:
             self.back_to_login()
         else:
@@ -68,13 +68,16 @@ class CreateAccount(QDialog):
         sql = 'select id from "mentcare".login where id =' + id
         if self.postgresDB.exists(sql):
             return True
+        # if self.postgresDB.executeSql(sql):
+        #     return True
         return False
 
     def is_taken_user(self):
         self.username = "'%s'" % self.create_user
-        #cols = ['id', 'isadmin', 'username', 'password']
         self.account_df = self.postgresDB.getRow(
             'select id,  isadmin, username, password from "mentcare".login where username =  ' + self.username)
+        # self.account_df = self.postgresDB.executeSql(
+        #     'select id,  isadmin, username, password from "mentcare".login where username =  ' + self.username)
         if self.account_df is None:
             return False
         return True

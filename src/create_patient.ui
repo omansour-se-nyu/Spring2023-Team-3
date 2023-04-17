@@ -51,7 +51,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Create New Pateint </string>
+    <string>Create New Patient </string>
    </property>
    <property name="textFormat">
     <enum>Qt::AutoText</enum>
