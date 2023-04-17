@@ -62,7 +62,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Data Management</string>
+    <string>Create Patient Record</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_5">
@@ -75,7 +75,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Configure Metadata</string>
+    <string>Edit Patient Record</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_6">
@@ -88,7 +88,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>System Administration</string>
+    <string>Delete Patient/Record</string>
    </property>
   </widget>
   <widget class="QLabel" name="label">
