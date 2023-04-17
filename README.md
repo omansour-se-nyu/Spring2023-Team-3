@@ -17,6 +17,4 @@ The MentCare project allows medical staff at a mental hospital to store informat
 
 # Running
 -----------------
-`$ cd Spring2023-Team-3/src`  
-
-`$ python login.py`
+`$ python src/login.py`
