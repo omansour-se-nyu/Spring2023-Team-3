@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5 import uic, QtCore
 import menu
 import postgres_connect
+import postgres_local
 import config
 from random import randint
 import os
@@ -28,6 +29,11 @@ class CreatePatient(QDialog):
                                                            config.remote_postgre["username"],
                                                            config.remote_postgre["passwd"],
                                                            config.remote_postgre["database"])
+        # self.postgresDB = postgres_local.PostgresToolbox(config.remote_postgre["dbname"],
+        #                                                  config.remote_postgre["user"],
+        #                                                  config.remote_postgre["pwd"],
+        #                                                  config.remote_postgre["host"],
+        #                                                  config.remote_postgre["port"])
 
 
     # the button with Save
@@ -78,12 +84,13 @@ class CreatePatient(QDialog):
 
         sql = "insert into " + tableName + " (" + schema + ") values (" + data + ")"
         exception = self.postgresDB.insertData(sql)
+        # exception = self.postgresDB.executeSql(sql)
         global prompt
         if exception == None:
-            prompt = prompt_dialog.Prompt( "New Patient created")
+            prompt = prompt_dialog.Prompt( "New Patient Successfully Created")
             prompt.show()
         else:
-            prompt = prompt_dialog.Prompt( "New Patient created failed")
+            prompt = prompt_dialog.Prompt( "New Patient Creation Failed")
             prompt.show()
 
 

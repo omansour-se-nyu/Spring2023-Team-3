@@ -63,4 +63,4 @@ class PostgresToolBox():
                 print("add command as a legacy command:", sql)
         
         return df
-        
+

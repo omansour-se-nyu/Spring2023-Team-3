@@ -4,6 +4,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QDialog, QLineEdit, QFrame
 import menu
 import postgres_connect
+import postgres_local
 import create_account
 import bcrypt
 
@@ -55,6 +56,7 @@ class LoginPage(QDialog):
             #menu.pushButton.clicked.connect(self.find_patient)
             self.close()
             return True
+
     def roleSelection(self):
         if self.radioButton.isChecked():
             return False
@@ -102,6 +104,8 @@ class LoginPage(QDialog):
         #cols = ['id', 'isadmin','username', 'password']
         self.account_df = self.postgresDB.getRow('select id, isadmin, username, password '
                                                  'from "mentcare".login where username =  ' + self.username)
+        # self.account_df = self.postgresDB.executeSql('select id, isadmin, username, password '
+        #                                          'from "mentcare".login where username =  ' + self.username)
 
         if self.account_df is None:
             return False
@@ -147,8 +151,12 @@ class LoginPage(QDialog):
 
 if __name__ == '__main__':
     postgresDB = postgres_connect.PostgresHandler('mentcare.cfteod2es6ye.us-east-1.rds.amazonaws.com', 5432, 'postgres', '(mfgaH3)', 'MentCare')
+    # postgresDB = postgres_local.PostgresToolBox('MentCare', 'postgres', '(mfgaH3)', 'localhost', 5432)
     app = QApplication(sys.argv)
     global login_page
     login_page = LoginPage(postgresDB)
     login_page.show()
     sys.exit(app.exec_())
+
+
+# 69824438
