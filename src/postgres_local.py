@@ -1,6 +1,6 @@
 import psycopg2
 from pandas import DataFrame
-from src.postgres_connect import PostgresHandler
+from postgres_connect import PostgresHandler
 import os
 
 class PostgresToolBox():

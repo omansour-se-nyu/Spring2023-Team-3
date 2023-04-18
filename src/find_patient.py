@@ -13,8 +13,7 @@ from PyQt5.QtCore import QAbstractTableModel, Qt, pyqtSignal
 import prompt_dialog
 import numpy as np
 from functools import partial
-
-from src import delete_patient
+import delete_patient
 
 
 class pandasModel(QAbstractTableModel):
