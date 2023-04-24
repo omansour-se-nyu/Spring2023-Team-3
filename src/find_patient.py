@@ -99,11 +99,12 @@ class FindPatient(QMainWindow):
         uic.loadUi(var, self)
         self.pushButton.clicked.connect(self.search)
         self.pushButton_2.clicked.connect(self.back_to_menu)
-        self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
-                                                           config.remote_postgre["port"],
-                                                           config.remote_postgre["username"],
-                                                           config.remote_postgre["passwd"],
-                                                           config.remote_postgre["database"])
+        self.postgresDB = config.DBconnect
+        # self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
+        #                                                    config.remote_postgre["port"],
+        #                                                    config.remote_postgre["username"],
+        #                                                    config.remote_postgre["passwd"],
+        #                                                    config.remote_postgre["database"])
         # self.postgresDB = postgres_local.PostgresToolbox(config.remote_postgre["dbname"],
         #                                                    config.remote_postgre["user"],
         #                                                    config.remote_postgre["pwd"],
@@ -120,7 +121,7 @@ class FindPatient(QMainWindow):
         self.patient = self.lineEdit.text()
         self.patientid = "'%s'" % self.patient
 
-        self.df = self.postgresDB.getRow('select * from "mentcare".patients where id = ' + self.patientid
+        self.df = self.postgresDB.getRow('select * from ' + config.schema +'.patients where id = ' + self.patientid
                                          + ' or patients.name = ' + self.patientid)
         # self.df = self.postgresDB.executeSql('select * from "mentcare".patients where id = ' + self.patientid
         #                                  + ' or patients.name = ' + self.patientid)
@@ -142,8 +143,8 @@ class FindPatient(QMainWindow):
         self.patientid = "'%s'" % self.df[0]
 
         records_cols = ['patient_id', 'doctor_id', 'record_id', 'last_modified', 'content']
-        record = self.postgresDB.getRowAll('select * from mentcare.records where patient_id = ' + self.patientid, records_cols)
-        # record = self.postgresDB.executeSql('select * from mentcare.records where patient_id = ' + self.patientid,records_cols)
+        record = self.postgresDB.getRowAll('select * from ' + config.schema +'.records where patient_id = ' + self.patientid, records_cols)
+        #record = self.postgresDB.executeSql('select * from mentcare.records where patient_id = ' + self.patientid,records_cols)
         #comb = record.append(self.df, ignore_index=True)
 
         model = pandasModel(patient_info)

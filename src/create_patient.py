@@ -24,12 +24,13 @@ class CreatePatient(QDialog):
 
         self.pushButton_2.clicked.connect(self.register)
         self.pushButton.clicked.connect(self.back_to_menu)
-        self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
-                                                           config.remote_postgre["port"],
-                                                           config.remote_postgre["username"],
-                                                           config.remote_postgre["passwd"],
-                                                           config.remote_postgre["database"])
-        # self.postgresDB = postgres_local.PostgresToolbox(config.remote_postgre["dbname"],
+        self.postgresDB = config.DBconnect
+        # self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
+        #                                                    config.remote_postgre["port"],
+        #                                                    config.remote_postgre["username"],
+        #                                                    config.remote_postgre["passwd"],
+        #                                                    config.remote_postgre["database"])
+        # # self.postgresDB = postgres_local.PostgresToolbox(config.remote_postgre["dbname"],
         #                                                  config.remote_postgre["user"],
         #                                                  config.remote_postgre["pwd"],
         #                                                  config.remote_postgre["host"],
@@ -76,18 +77,18 @@ class CreatePatient(QDialog):
         self.patient_ssn = "'%s'" %self.patient_ssn
         self.patinet_address = "'%s'" %self.patinet_address
 
-        tableName = '"mentcare".patients'
+        tableName = config.schema +'.patients'
         schema = 'id, name, gender, birth_date, ssn, phone, email, address'
         data = self.patient_id + "," + self.patient_name + "," \
                + self.patient_gender + "," + self.birth_date + "," \
                + self.patient_ssn + "," + self.patient_phone + "," + self.patient_email + "," + self.patinet_address
 
         sql = "insert into " + tableName + " (" + schema + ") values (" + data + ")"
-        exception = self.postgresDB.insertData(sql)
-        # exception = self.postgresDB.executeSql(sql)
+        #exception = self.postgresDB.insertData(sql)
+        exception = self.postgresDB.executeSql(sql)
         global prompt
         if exception == None:
-            prompt = prompt_dialog.Prompt( "New Patient Successfully Created")
+            prompt = prompt_dialog.Prompt( "New Patient Successfully Created\n The ID: "+id)
             prompt.show()
         else:
             prompt = prompt_dialog.Prompt( "New Patient Creation Failed")
@@ -116,14 +117,14 @@ class CreatePatient(QDialog):
 
     def id_existed(self, id):
         id = "'%s'" %id
-        sql = 'select id from "mentcare".patients where id =' + id
+        sql = 'select id from ' + config.schema +'.patients where id =' + id
         if self.postgresDB.exists(sql):
             return True
         return False
-    
+
     def record_id_existed(self, id):
         id = "'%s'" %id
-        sql = 'select record_id from "public".records where record_id =' + id
+        sql = 'select record_id from ' + config.schema +'.records where record_id =' + id
         if self.postgresDB.exists(sql):
             return True
         return False

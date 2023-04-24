@@ -23,8 +23,10 @@ class PostgresHandler():
             )
             # print(self.con)
             self.cur = self.con.cursor()
+            return True
         except Exception as error:
             print(error)
+            return False
 
     def getData(self, tableName):
         if self.con == None:
