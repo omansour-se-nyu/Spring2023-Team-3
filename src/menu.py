@@ -79,17 +79,7 @@ class MainMenu(QMainWindow):
 
     def back_to_login(self):
         global backToLogin
-        self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
-                                                           config.remote_postgre["port"],
-                                                           config.remote_postgre["username"],
-                                                           config.remote_postgre["passwd"],
-                                                           config.remote_postgre["database"])
-        # self.postgresDB = postgres_local.PostgresToolbox(config.remote_postgre["dbname"],
-        #                                                  config.remote_postgre["user"],
-        #                                                  config.remote_postgre["pwd"],
-        #                                                  config.remote_postgre["host"],
-        #                                                  config.remote_postgre["port"])
-        backToLogin = login.LoginPage(self.postgresDB)
+        backToLogin = login.LoginPage()
         backToLogin.show()
         self.close()
 

@@ -120,11 +120,6 @@
      <string>Female</string>
     </property>
    </item>
-   <item>
-    <property name="text">
-     <string>Other</string>
-    </property>
-   </item>
   </widget>
   <widget class="QLabel" name="label_4">
    <property name="geometry">

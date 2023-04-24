@@ -7,9 +7,10 @@ import postgres_connect
 import postgres_local
 import create_account
 import bcrypt
+import config
 
 class LoginPage(QDialog):
-    def __init__(self, postgresDB):
+    def __init__(self,):
         super().__init__()
         self.set_ui()
         var = os.path.dirname(os.path.abspath(__file__)) + "/login.ui"
@@ -18,7 +19,7 @@ class LoginPage(QDialog):
         self.pushButton_2.clicked.connect(self.login)
         self.pushButton.clicked.connect(self.create_account)
         self.current_user = None
-        self.postgresDB = postgresDB
+        self.postgresDB = config.DBconnect
 
 
     def set_ui(self):
@@ -77,7 +78,7 @@ class LoginPage(QDialog):
 
     def create_account(self): #still need to implement create account logic (connection being lost)
         global new_account
-        new_account = create_account.CreateAccount(self.postgresDB)
+        new_account = create_account.CreateAccount()
         #create_account.pushButton_2.clicked.connect(create_account.register)
         #create_account.pushButton.clicked.connect(self.back_to_login)
         new_account.show()
@@ -103,7 +104,7 @@ class LoginPage(QDialog):
         self.username  = "'%s'" % self.current_user
         #cols = ['id', 'isadmin','username', 'password']
         self.account_df = self.postgresDB.getRow('select id, isadmin, username, password '
-                                                 'from "mentcare".login where username =  ' + self.username)
+                                                 'from ' + config.schema +'.login where username =  ' + self.username)
         # self.account_df = self.postgresDB.executeSql('select id, isadmin, username, password '
         #                                          'from "mentcare".login where username =  ' + self.username)
 
@@ -150,11 +151,11 @@ class LoginPage(QDialog):
         pass
 
 if __name__ == '__main__':
-    postgresDB = postgres_connect.PostgresHandler('mentcare.cfteod2es6ye.us-east-1.rds.amazonaws.com', 5432, 'postgres', '(mfgaH3)', 'MentCare')
-    # postgresDB = postgres_local.PostgresToolBox('MentCare', 'postgres', '(mfgaH3)', 'localhost', 5432)
+    #postgresDB = postgres_connect.PostgresHandler('mentcare.cfteod2es6ye.us-east-1.rds.amazonaws.com', 5432, 'postgres', '(mfgaH3)', 'MentCare')
+    #postgresDB = postgres_local.PostgresToolBox('MentCare', 'postgres', '(mfgaH3)', 'localhost', 5432)
     app = QApplication(sys.argv)
     global login_page
-    login_page = LoginPage(postgresDB)
+    login_page = LoginPage()
     login_page.show()
     sys.exit(app.exec_())
 

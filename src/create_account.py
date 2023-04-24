@@ -5,14 +5,15 @@ from PyQt5 import uic
 import bcrypt
 import login
 from random import randint
+import config
 
 class CreateAccount(QDialog):
-    def __init__(self, postgresDB):
+    def __init__(self):
         super().__init__()
         self.set_ui()
         var = os.path.dirname(os.path.abspath(__file__)) + "/create_account.ui"
         uic.loadUi(var, self)
-        self.postgresDB = postgresDB
+        self.postgresDB = config.DBconnect
         self.pushButton_2.clicked.connect(self.register)
         self.pushButton.clicked.connect(self.back_to_login)
 
@@ -52,32 +53,31 @@ class CreateAccount(QDialog):
         self.login_id = "'%s'" % id
         self.create_user = "'%s'" % self.create_user
         self.hashed_passworf = "'%s'" % self.hashed_passworf
-        query = 'insert into "mentcare".login(id, isadmin, username, password) ' \
+        query = 'insert into ' + config.schema +'.login(id, isadmin, username, password) ' \
                 'values(' + self.login_id + ","  + self.isadmin + ","  + self.create_user + "," + self.hashed_passworf + ")"
         print(query)
-        exception = self.postgresDB.insertData(query)
-        # exception = self.postgresDB.executeSql(query)
+        #exception = self.postgresDB.insertData(query)
+        exception = self.postgresDB.executeSql(query)
         if exception == None:
             self.back_to_login()
         else:
-            self.label_6.setText(exception)
+            self.label_6.setText("Error!")
 
 
     def id_existed(self, id):
         id = "'%s'" %id
-        sql = 'select id from "mentcare".login where id =' + id
+        sql = 'select id from ' + config.schema +'.login where id =' + id
         if self.postgresDB.exists(sql):
             return True
-        # if self.postgresDB.executeSql(sql):
-        #     return True
         return False
 
     def is_taken_user(self):
         self.username = "'%s'" % self.create_user
+        self.postgresDB.connect()
         self.account_df = self.postgresDB.getRow(
-            'select id,  isadmin, username, password from "mentcare".login where username =  ' + self.username)
+            'select id,  isadmin, username, password from ' + config.schema +'.login where username =  ' + self.username)
         # self.account_df = self.postgresDB.executeSql(
-        #     'select id,  isadmin, username, password from "mentcare".login where username =  ' + self.username)
+        #     'select id,  isadmin, username, password from ' + config.schema +'.login where username =  ' + self.username)
         if self.account_df is None:
             return False
         return True
@@ -95,7 +95,7 @@ class CreateAccount(QDialog):
 
     def back_to_login(self):
         global back
-        back = login.LoginPage(self.postgresDB)
+        back = login.LoginPage()
         back.show()
         self.close()
 

@@ -13,6 +13,7 @@ from datetime import datetime
 class CreateRecord(QDialog):
     def __init__(self, uid, current_user, role):
         super().__init__()
+        self.userId = uid
         self.doctor_id = "'%s'" % uid
         self.current_user = current_user
         self.role = role
@@ -21,11 +22,12 @@ class CreateRecord(QDialog):
 
         self.pushButton.clicked.connect(self.create)
         self.pushButton_2.clicked.connect(self.back_to_menu)
-        self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
-                                                           config.remote_postgre["port"],
-                                                           config.remote_postgre["username"],
-                                                           config.remote_postgre["passwd"],
-                                                           config.remote_postgre["database"])
+        self.postgresDB = config.DBconnect
+        # self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
+        #                                                    config.remote_postgre["port"],
+        #                                                    config.remote_postgre["username"],
+        #                                                    config.remote_postgre["passwd"],
+        #                                                    config.remote_postgre["database"])
         # self.postgresDB = postgres_local.PostgresToolbox(config.remote_postgre["dbname"],
         #                                                  config.remote_postgre["user"],
         #                                                  config.remote_postgre["pwd"],
@@ -57,15 +59,15 @@ class CreateRecord(QDialog):
         self.last_modified = "'%s'" % self.last_modified
         self.record = "'%s'" % self.record
 
-        tableName = '"mentcare".records'
+        tableName = config.schema +'.records'
         schema = 'patient_id, doctor_id, record_id, last_modified, content'
         data = self.patient_id + "," + self.doctor_id + "," \
                + self.record_id + "," + self.last_modified + "," \
                + self.record
 
         sql = "insert into " + tableName + " (" + schema + ") values (" + data + ")"
-        exception = self.postgresDB.insertData(sql)
-        # exception = self.postgresDB.executeSql(sql)
+        #exception = self.postgresDB.insertData(sql)
+        exception = self.postgresDB.executeSql(sql)
         global prompt
         if exception == None:
             prompt = prompt_dialog.Prompt("Creation Success")
@@ -76,11 +78,9 @@ class CreateRecord(QDialog):
 
     def id_existed(self, id):
         id = "'%s'" % id
-        sql = 'select id from "mentcare".patients where id =' + id
+        sql = 'select id from ' + config.schema +'.patients where id =' + id
         if self.postgresDB.exists(sql):
             return True
-        # if self.postgresDB.executeSql(sql):
-        #     return True
         return False
     #
     # def record_id_existed(self, id):
@@ -93,6 +93,6 @@ class CreateRecord(QDialog):
     # the button with cancel
     def back_to_menu(self):
         global back
-        back = menu.MainMenu(self.doctor_id, self.current_user, self.role)
+        back = menu.MainMenu(self.userId, self.current_user, self.role)
         back.show()
         self.close()

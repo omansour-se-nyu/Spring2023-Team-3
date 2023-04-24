@@ -24,11 +24,12 @@ class DeletePatient(QMainWindow):
         self.pushButton_3.clicked.connect(self.delete_patient)
         self.pushButton.clicked.connect(self.delete_record)
         self.pushButton_2.clicked.connect(self.back_to_menu)
-        self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
-                                                           config.remote_postgre["port"],
-                                                           config.remote_postgre["username"],
-                                                           config.remote_postgre["passwd"],
-                                                           config.remote_postgre["database"])
+        self.postgresDB = config.DBconnect
+        # self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
+        #                                                    config.remote_postgre["port"],
+        #                                                    config.remote_postgre["username"],
+        #                                                    config.remote_postgre["passwd"],
+        #                                                    config.remote_postgre["database"])
         # self.postgresDB = postgres_local.PostgresToolbox(config.remote_postgre["dbname"],
         #                                                  config.remote_postgre["user"],
         #                                                  config.remote_postgre["pwd"],
@@ -37,10 +38,10 @@ class DeletePatient(QMainWindow):
 
     def delete_patient(self): #delete patient from patients table and all records corresponding to patient id from records table
         self.patient_id = "'%s'" % self.lineEdit.text()
-        exception2 = self.postgresDB.insertData('delete from mentcare.records where patient_id = ' + self.patient_id)
-        exception1 = self.postgresDB.insertData('delete from mentcare.patients where id = ' + self.patient_id)
-        # exception2 = self.postgresDB.executeSql('delete from mentcare.records where patient_id = ' + self.patient_id)
-        # exception1 = self.postgresDB.executeSql('delete from mentcare.patients where id = ' + self.patient_id)
+        #exception2 = self.postgresDB.insertData('delete from mentcare.records where patient_id = ' + self.patient_id)
+        #exception1 = self.postgresDB.insertData('delete from mentcare.patients where id = ' + self.patient_id)
+        exception2 = self.postgresDB.executeSql('delete from ' + config.schema +'.records where patient_id = ' + self.patient_id)
+        exception1 = self.postgresDB.executeSql('delete from ' + config.schema +'.patients where id = ' + self.patient_id)
         global prompt2
         if exception1 == None and exception2 == None:
             prompt2 = prompt_dialog.Prompt("Patient Successfully Deleted")
@@ -62,8 +63,8 @@ class DeletePatient(QMainWindow):
             # self.record_id = self.record_id.split(" ")[1]
         # print(self.record, type(self.record))
         print("record_id" + str(self.record_id))
-        exception = self.postgresDB.insertData('delete from mentcare.records where record_id = ' + self.record_id)
-        # exception = self.postgresDB.executeSql('delete from mentcare.records where record_id = ' + self.record_id)
+        #exception = self.postgresDB.insertData('delete from mentcare.records where record_id = ' + self.record_id)
+        exception = self.postgresDB.executeSql('delete from ' + config.schema +'.records where record_id = ' + self.record_id)
         global prompt2
         if exception == None:
             prompt2 = prompt_dialog.Prompt("Record Successfully Deleted")

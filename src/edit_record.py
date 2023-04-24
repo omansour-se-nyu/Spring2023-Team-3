@@ -23,11 +23,12 @@ class EditRecord(QMainWindow):
         self.pushButton_3.clicked.connect(self.check_record)
         self.pushButton.clicked.connect(self.edit_record)
         self.pushButton_2.clicked.connect(self.back_to_menu)
-        self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
-                                                                   config.remote_postgre["port"],
-                                                                   config.remote_postgre["username"],
-                                                                   config.remote_postgre["passwd"],
-                                                                   config.remote_postgre["database"])
+        self.postgresDB = config.DBconnect
+        # self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
+        #                                                            config.remote_postgre["port"],
+        #                                                            config.remote_postgre["username"],
+        #                                                            config.remote_postgre["passwd"],
+        #                                                            config.remote_postgre["database"])
         # self.postgresDB = postgres_local.PostgresToolbox(config.remote_postgre["dbname"],
         #                                                  config.remote_postgre["user"],
         #                                                  config.remote_postgre["pwd"],
@@ -37,8 +38,8 @@ class EditRecord(QMainWindow):
     def edit_record(self):
         self.content = "'%s'" % self.lineEdit_2.text()
         self.last_modified = "'%s'" % datetime.now()
-        exception = self.postgresDB.insertData('update mentcare.records set last_modified = ' + self.last_modified + ' ,content = ' + self.content + ' where patient_id = ' + self.patient_id + 'and record_id = ' + self.record_id)
-        # exception = self.postgresDB.executeSql('update mentcare.records set last_modified = ' + self.last_modified + ' ,content = ' + self.content + ' where patient_id = ' + self.patient_id + 'and record_id = ' + self.record_id)
+        #exception = self.postgresDB.insertData('update mentcare.records set last_modified = ' + self.last_modified + ' ,content = ' + self.content + ' where patient_id = ' + self.patient_id + 'and record_id = ' + self.record_id)
+        exception = self.postgresDB.executeSql('update ' + config.schema +'.records set last_modified = ' + self.last_modified + ' ,content = ' + self.content + ' where patient_id = ' + self.patient_id + 'and record_id = ' + self.record_id)
         print(exception)
         global prompt2
         if exception == None:
@@ -61,12 +62,12 @@ class EditRecord(QMainWindow):
         self.record_id = self.lineEdit_3.text()
         self.record_id = "'%s'" % self.record_id
 
-        self.df = self.postgresDB.getRow('select content from mentcare.records where patient_id = ' + self.patient_id + 'and record_id = ' + self.record_id)
-        # self.df = self.postgresDB.executeSql('select content from mentcare.records where patient_id = ' + self.patient_id + 'and record_id = ' + self.record_id)
+        self.df = self.postgresDB.getRow('select content from ' + config.schema +'.records where patient_id = ' + self.patient_id + 'and record_id = ' + self.record_id)
+        #self.df = self.postgresDB.executeSql('select content from mentcare.records where patient_id = ' + self.patient_id + 'and record_id = ' + self.record_id)
         global prompt
         if self.df is None:
-            self.patient_check = self.postgresDB.getRow('select patient_id from mentcare.records where patient_id = ' + self.patient_id)
-            self.record_check = self.postgresDB.getRow('select record_id from mentcare.records where record_id = ' + self.record_id)
+            self.patient_check = self.postgresDB.getRow('select patient_id from ' + config.schema +'.records where patient_id = ' + self.patient_id)
+            self.record_check = self.postgresDB.getRow('select record_id from ' + config.schema +'.records where record_id = ' + self.record_id)
             # self.patient_check = self.postgresDB.executeSql(
             #     'select patient_id from mentcare.records where patient_id = ' + self.patient_id)
             # self.record_check = self.postgresDB.executeSql(
@@ -82,10 +83,10 @@ class EditRecord(QMainWindow):
                 prompt.show()
             return False
 
-        self.df2 = self.postgresDB.getRow('select name from mentcare.patients where id = ' + self.patient_id)
-        # self.df2 = self.postgresDB.executeSql('select name from mentcare.patients where id = ' + self.patient_id)
+        self.df2 = self.postgresDB.getRow('select name from ' + config.schema +'.patients where id = ' + self.patient_id)
+        #self.df2 = self.postgresDB.executeSql('select name from mentcare.patients where id = ' + self.patient_id)
         patient_name = self.df2[0]
-        prompt = prompt_dialog.Prompt('Now you are editing \nthe records of ' + patient_name + '.')
+        prompt = prompt_dialog.Prompt('Now you are editing \nthe records of ' + patient_name)
         prompt.label.setFont(QFont("Arial", 18))
         prompt.show()
 
