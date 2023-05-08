@@ -102,10 +102,10 @@ class LoginPage(QDialog):
     def is_valid_user(self):
         self.username  = "'%s'" % self.current_user
         #cols = ['id', 'isadmin','username', 'password']
-        self.account_df = self.postgresDB.getRow('select id, isadmin, username, password '
-                                                 'from "mentcare".login where username =  ' + self.username)
-        # self.account_df = self.postgresDB.executeSql('select id, isadmin, username, password '
+        # self.account_df = self.postgresDB.getRow('select id, isadmin, username, password '
         #                                          'from "mentcare".login where username =  ' + self.username)
+        self.account_df = self.postgresDB.executeSql('select id, isadmin, username, password '
+                                                 'from "mentcare".login where username =  ' + self.username, False).iloc[0]
 
         if self.account_df is None:
             return False
@@ -150,8 +150,8 @@ class LoginPage(QDialog):
         pass
 
 if __name__ == '__main__':
-    postgresDB = postgres_connect.PostgresHandler('mentcare.cfteod2es6ye.us-east-1.rds.amazonaws.com', 5432, 'postgres', '(mfgaH3)', 'MentCare')
-    # postgresDB = postgres_local.PostgresToolBox('MentCare', 'postgres', '(mfgaH3)', 'localhost', 5432)
+    # postgresDB = postgres_connect.PostgresHandler('mentcare.cfteod2es6ye.us-east-1.rds.amazonaws.com', 5432, 'postgres', '(mfgaH3)', 'MentCare')
+    postgresDB = postgres_local.PostgresToolBox()
     app = QApplication(sys.argv)
     global login_page
     login_page = LoginPage(postgresDB)

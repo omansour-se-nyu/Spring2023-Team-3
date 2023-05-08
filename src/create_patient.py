@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QDialog
 from PyQt5 import uic, QtCore
 import menu
 import postgres_connect
-import postgres_local
+from postgres_local import PostgresToolBox
 import config
 from random import randint
 import os
@@ -24,16 +24,12 @@ class CreatePatient(QDialog):
 
         self.pushButton_2.clicked.connect(self.register)
         self.pushButton.clicked.connect(self.back_to_menu)
-        self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
-                                                           config.remote_postgre["port"],
-                                                           config.remote_postgre["username"],
-                                                           config.remote_postgre["passwd"],
-                                                           config.remote_postgre["database"])
-        # self.postgresDB = postgres_local.PostgresToolbox(config.remote_postgre["dbname"],
-        #                                                  config.remote_postgre["user"],
-        #                                                  config.remote_postgre["pwd"],
-        #                                                  config.remote_postgre["host"],
-        #                                                  config.remote_postgre["port"])
+        # self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
+        #                                                    config.remote_postgre["port"],
+        #                                                    config.remote_postgre["username"],
+        #                                                    config.remote_postgre["passwd"],
+        #                                                    config.remote_postgre["database"])
+        self.postgresDB = PostgresToolBox()
 
 
     # the button with Save
@@ -83,8 +79,8 @@ class CreatePatient(QDialog):
                + self.patient_ssn + "," + self.patient_phone + "," + self.patient_email + "," + self.patinet_address
 
         sql = "insert into " + tableName + " (" + schema + ") values (" + data + ")"
-        exception = self.postgresDB.insertData(sql)
-        # exception = self.postgresDB.executeSql(sql)
+        # exception = self.postgresDB.insertData(sql)
+        exception = self.postgresDB.executeSql(sql)
         global prompt
         if exception == None:
             prompt = prompt_dialog.Prompt( "New Patient Successfully Created")
@@ -117,14 +113,14 @@ class CreatePatient(QDialog):
     def id_existed(self, id):
         id = "'%s'" %id
         sql = 'select id from "mentcare".patients where id =' + id
-        if self.postgresDB.exists(sql):
+        if self.postgresDB.executeSql(sql, False):
             return True
         return False
     
     def record_id_existed(self, id):
         id = "'%s'" %id
         sql = 'select record_id from "public".records where record_id =' + id
-        if self.postgresDB.exists(sql):
+        if self.postgresDB.executeSql(sql, False):
             return True
         return False
 

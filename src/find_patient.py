@@ -4,7 +4,7 @@ import menu
 import view_record
 import delete_patient
 import postgres_connect
-import postgres_local
+from postgres_local import PostgresToolBox
 import config
 import os
 import pandas as pd
@@ -99,16 +99,12 @@ class FindPatient(QMainWindow):
         uic.loadUi(var, self)
         self.pushButton.clicked.connect(self.search)
         self.pushButton_2.clicked.connect(self.back_to_menu)
-        self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
-                                                           config.remote_postgre["port"],
-                                                           config.remote_postgre["username"],
-                                                           config.remote_postgre["passwd"],
-                                                           config.remote_postgre["database"])
-        # self.postgresDB = postgres_local.PostgresToolbox(config.remote_postgre["dbname"],
-        #                                                    config.remote_postgre["user"],
-        #                                                    config.remote_postgre["pwd"],
-        #                                                    config.remote_postgre["host"],
-        #                                                    config.remote_postgre["port"])
+        # self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
+        #                                                    config.remote_postgre["port"],
+        #                                                    config.remote_postgre["username"],
+        #                                                    config.remote_postgre["passwd"],
+        #                                                    config.remote_postgre["database"])
+        self.postgresDB = PostgresToolBox()
 
     def back_to_menu(self):
         global backToMenu
@@ -120,10 +116,10 @@ class FindPatient(QMainWindow):
         self.patient = self.lineEdit.text()
         self.patientid = "'%s'" % self.patient
 
-        self.df = self.postgresDB.getRow('select * from "mentcare".patients where id = ' + self.patientid
-                                         + ' or patients.name = ' + self.patientid)
-        # self.df = self.postgresDB.executeSql('select * from "mentcare".patients where id = ' + self.patientid
+        # self.df = self.postgresDB.getRow('select * from "mentcare".patients where id = ' + self.patientid
         #                                  + ' or patients.name = ' + self.patientid)
+        self.df = self.postgresDB.executeSql('select * from "mentcare".patients where id = ' + self.patientid
+                                         + ' or patients.name = ' + self.patientid, False).iloc[0]
         if self.df is None:
             global prompt
             prompt = prompt_dialog.Prompt("Can't find the patient")
@@ -140,10 +136,12 @@ class FindPatient(QMainWindow):
         patient_info.columns.values[1] = 'Values'
 
         self.patientid = "'%s'" % self.df[0]
+        print(self.df[0])
 
         records_cols = ['patient_id', 'doctor_id', 'record_id', 'last_modified', 'content']
-        record = self.postgresDB.getRowAll('select * from mentcare.records where patient_id = ' + self.patientid, records_cols)
-        # record = self.postgresDB.executeSql('select * from mentcare.records where patient_id = ' + self.patientid,records_cols)
+        # record = self.postgresDB.getRowAll('select * from mentcare.records where patient_id = ' + self.patientid, records_cols)
+        record = self.postgresDB.executeSql('select * from "mentcare".records where patient_id = ' + self.patientid, False)
+        record = pd.DataFrame(record, columns = records_cols)
         #comb = record.append(self.df, ignore_index=True)
 
         model = pandasModel(patient_info)
@@ -162,10 +160,10 @@ class FindPatient(QMainWindow):
             columnCount = model.columnCount()-1
             print(rowCount, columnCount)
             for i in range(rowCount):
-                button_widget = ButtonWidget(self.id, self.current_user, self.role, record.loc[i])
+                button_widget = ButtonWidget(self.id, self.current_user, self.role, record.iloc[i])
                 self.tableView_2.setIndexWidget(model.index(i, columnCount-1), button_widget)
             for i in range(rowCount):
-                delete_button = DeleteButton(self.id, self.current_user, self.role, record.loc[i])
+                delete_button = DeleteButton(self.id, self.current_user, self.role, record.iloc[i])
                 self.tableView_2.setIndexWidget(model.index(i, columnCount), delete_button)
             self.tableView_2.show()
 

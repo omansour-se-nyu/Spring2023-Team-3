@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import uic
 from PyQt5.QtGui import QFont
 import postgres_connect
-import postgres_local
+from postgres_local import PostgresToolBox
 import config
 import os
 import pandas as pd
@@ -24,21 +24,17 @@ class DeletePatient(QMainWindow):
         self.pushButton_3.clicked.connect(self.delete_patient)
         self.pushButton.clicked.connect(self.delete_record)
         self.pushButton_2.clicked.connect(self.back_to_menu)
-        self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
-                                                           config.remote_postgre["port"],
-                                                           config.remote_postgre["username"],
-                                                           config.remote_postgre["passwd"],
-                                                           config.remote_postgre["database"])
-        # self.postgresDB = postgres_local.PostgresToolbox(config.remote_postgre["dbname"],
-        #                                                  config.remote_postgre["user"],
-        #                                                  config.remote_postgre["pwd"],
-        #                                                  config.remote_postgre["host"],
-        #                                                  config.remote_postgre["port"])
+        # self.postgresDB = postgres_connect.PostgresHandler(config.remote_postgre["url"],
+        #                                                    config.remote_postgre["port"],
+        #                                                    config.remote_postgre["username"],
+        #                                                    config.remote_postgre["passwd"],
+        #                                                    config.remote_postgre["database"])
+        self.postgresDB = PostgresToolBox()
 
     def delete_patient(self): #delete patient from patients table and all records corresponding to patient id from records table
         self.patient_id = "'%s'" % self.lineEdit.text()
-        exception2 = self.postgresDB.insertData('delete from mentcare.records where patient_id = ' + self.patient_id)
-        exception1 = self.postgresDB.insertData('delete from mentcare.patients where id = ' + self.patient_id)
+        exception2 = self.postgresDB.executeSql('delete from mentcare.records where patient_id = ' + self.patient_id)
+        exception1 = self.postgresDB.executeSql('delete from mentcare.patients where id = ' + self.patient_id)
         # exception2 = self.postgresDB.executeSql('delete from mentcare.records where patient_id = ' + self.patient_id)
         # exception1 = self.postgresDB.executeSql('delete from mentcare.patients where id = ' + self.patient_id)
         global prompt2
@@ -62,7 +58,7 @@ class DeletePatient(QMainWindow):
             # self.record_id = self.record_id.split(" ")[1]
         # print(self.record, type(self.record))
         print("record_id" + str(self.record_id))
-        exception = self.postgresDB.insertData('delete from mentcare.records where record_id = ' + self.record_id)
+        exception = self.postgresDB.executeSql('delete from mentcare.records where record_id = ' + self.record_id)
         # exception = self.postgresDB.executeSql('delete from mentcare.records where record_id = ' + self.record_id)
         global prompt2
         if exception == None:
